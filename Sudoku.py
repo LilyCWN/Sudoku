@@ -26,11 +26,11 @@ class Sudoku:
         return (np.sum(vbTemp) == 9)
 
 
-    def VerifyRow(self, i, j):
+    def VerifyRow(self, i):
         return self.VerifyNineNumbers(self.vnArr[i, :])
 
 
-    def VerifyColumn(self, i, j):
+    def VerifyColumn(self, j):
         return self.VerifyNineNumbers(self.vnArr[: j], (9, 1))
 
 
@@ -42,14 +42,26 @@ class Sudoku:
 
 
     def VerifyCell(self, i, j):
-        return self.VerifyRow(i, j) and \
-            self.VerifyColumn(i, j) and \
+        return self.VerifyRow(i) and \
+            self.VerifyColumn(j) and \
             self.VerifyBlock(i, j)
 
 
     def VerifySudoku(self):
         for i in range(0, 9):
-            for j in range(0, 9):
-                if (not self.VerifyCell(i, j)):
+            if (not self.VerifyRow(i)):
+                return False
+        for j in range(0, 9):
+            if (not self.VerifyColumn(j)):
+                return False
+        for i in range(0, 9, 3):
+            for j in range(0, 9, 3):
+                if (not self.VerifyBlock(i, j)):
                     return False
         return True
+
+
+    def RandomizeSudoku(self, nSeed = 1):
+        np.random.seed(nSeed)
+        vnTemp = np.arange(1, 10) # numpy array with 1 to 9
+        np.random.shuffle(vnTemp)
