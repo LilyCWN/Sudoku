@@ -22,7 +22,7 @@ class Sudoku:
         for i in range(0, 9):
             if ((vnTemp[i] < 1) or (vnTemp[i] > 9)):
                 return False
-            vbTemp[vnTemp[i - 1]] = True
+            vbTemp[vnTemp[i] - 1] = True
         return (np.sum(vbTemp) == 9)
 
 
@@ -62,6 +62,12 @@ class Sudoku:
 
 
     def RandomizeSudoku(self, nSeed = 1):
-        np.random.seed(nSeed)
-        vnTemp = np.arange(1, 10) # numpy array with 1 to 9
-        np.random.shuffle(vnTemp)
+        np.random.seed(nSeed) # apply the seed
+        vnStaticList = np.arange(1, 10) # array with element 1 - 9
+        np.random.shuffle(vnStaticList)
+        self.vnArr[0, :] = vnStaticList # generate 1st row
+
+        vnStaticList = np.arange(1, 10) # array with element 1 - 9
+        vnTempList = np.setdiff1d(vnStaticList, self.vnArr[0, 0])
+        np.random.shuffle(vnTempList)
+        self.vnArr[1:, 0] = np.resize(vnTempList, (8))
