@@ -2,9 +2,10 @@ import numpy as np
 import math
 import random
 from tkinter import *
-
+from Cell import Cell
 
 class Sudoku:
+	vCell = [[Cell()] * 9] * 9
 	vnArr = np.zeros((9, 9), dtype = int) # a 2d array representing the sudoku
 	nRandomSeed = 1
 	table = Tk()
@@ -18,11 +19,8 @@ class Sudoku:
 
 
 	def test(self, i, j):
-		print(str(i) + ", " + str(j), " " + self.vnEntryVal[i * 9 + j].get())
-
-
-	def test1(self, *args):
-		print(random.randint(0, 9))
+		self.FillCell(i, j, self.vnEntryVal[i * 9 + j].get())
+		self.PrintSudokuConsole()
 
 
 	def PrintSudokuGUI(self):
@@ -30,9 +28,9 @@ class Sudoku:
 		for i in range(0, 9):
 			for j in range(0, 9):
 				self.vnEntryVal.append(StringVar())
+				bg = '#EEEEEE' if (((i % 3) != 2) and ((j % 3) != 2)) else '#BEBEBE'
 				self.vEntry[i][j] = Entry(self.table, width = 2, fg = 'blue', font = ('Consolas', 16, 'bold'),\
-					justify = CENTER, textvariable = self.vnEntryVal[i * 9 + j])
-				# self.vEntry[i][j].bind ("<FocusOut>", self.test1)
+					justify = CENTER, textvariable = self.vnEntryVal[i * 9 + j], bg = bg)
 				self.vEntry[i][j].bind ("<FocusOut>", \
 					lambda event, a = i, b = j: self.test(a, b))
 				self.vEntry[i][j].grid(row = i, column = j)
@@ -118,10 +116,16 @@ class Sudoku:
 		return True
 
 
+	def FillCell(self, i, j, nVal):
+		self.vnArr[i, j] = nVal
+		(self.vCell[i][j]).Fill(nVal)
+
+
 	def RandomizeSudoku(self, nSeed = 1):
 		np.random.seed(nSeed) # apply the seed
 		random.seed(nSeed)
 
 		vnStaticList = np.arange(1, 10) # array with element 1 - 9
 		np.random.shuffle(vnStaticList)
-		self.vnArr[0, :] = vnStaticList # generate 1st row
+		for i in range(0, 9):
+			self.FillCell(0, i, vnStaticList[i]) # generate 1st row
