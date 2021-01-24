@@ -15,11 +15,11 @@ class Cell:
 
 
 	def SetNotPossible(self, nNumber):
-		vbPossible[nNumber - 1] = False
+		self.vbPossible[nNumber - 1] = False
 
 
-	def NumOfPossible(self):
-		if bIsFilled:
+	def GetNumOfPossible(self):
+		if self.bIsFilled:
 			return 0
 		else:
-			return sum(vbPossible)
+			return sum(self.vbPossible)

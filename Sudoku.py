@@ -2,11 +2,13 @@ import numpy as np
 import math
 import random
 from tkinter import *
-from Cell import Cell
+# from Cell import Cell
 
 class Sudoku:
-	vCell = [[Cell()] * 9] * 9
+	# vCell = [[Cell()] * 9] * 9
 	vnArr = np.zeros((9, 9), dtype = int) # a 2d array representing the sudoku
+	vbPossible = np.zeros((9, 9, 9), dtype = bool) # a 2d array representing the sudoku
+
 	nRandomSeed = 1
 	table = Tk()
 	vEntry = [[0] * 9] * 9
@@ -19,7 +21,7 @@ class Sudoku:
 
 
 	def test(self, i, j):
-		self.FillCell(i, j, self.vnEntryVal[i * 9 + j].get())
+		# self.FillCell(i, j, self.vnEntryVal[i * 9 + j].get())
 		self.PrintSudokuConsole()
 
 
@@ -118,7 +120,30 @@ class Sudoku:
 
 	def FillCell(self, i, j, nVal):
 		self.vnArr[i, j] = nVal
-		(self.vCell[i][j]).Fill(nVal)
+		# (self.vCell[i][j]).Fill(nVal)
+		self.SetOtherNotPossible(i, j, nVal)
+
+
+	def SetOtherNotPossible(self, i, j, nVal):
+		for k in range(0 ,9):
+			# (self.vCell[i][k]).SetNotPossible(nVal)
+			# (self.vCell[k][j]).SetNotPossible(nVal)
+		q = math.floor(i / 3) * 3
+		w = math.floor(j / 3) * 3
+		# print("i = ," + str(i) + ", j = " + str(j) + ", q = " + str(q) + ", w = " + str(w))
+		for a in range(q, q + 2):
+			for b in range(w, w + 2):
+				# (self.vCell[a][b]).SetNotPossible(nVal)
+
+
+	def CheckAnyOnyPossible(self):
+		list = []
+		for i in range(0, 9):
+			for j in range(0, 9):
+				# if ((not self.vCell[i][j].bIsFilled) and ((self.vCell[i][j]).GetNumOfPossible() == 0)):
+				# 	list.append([i, j])
+		return list
+
 
 
 	def RandomizeSudoku(self, nSeed = 1):
