@@ -2,15 +2,20 @@ import numpy as np
 import math
 import random
 from tkinter import *
-from Cell import Cell
 
 class Sudoku:
-	vCell = [[Cell()] * 9] * 9
-	vnArr = np.zeros((9, 9), dtype = int) # a 2d array representing the sudoku
+	vnArr = np.zeros((9, 9), dtype = int) # 2d array representing the sudoku
+	vbPossible = np.ones((9, 9, 9), dtype = bool)
+	vnNumOfPossible = np.zeros((9, 9), dtype = int)
+	nFilledCell = 0
 	nRandomSeed = 1
 	table = Tk()
 	vEntry = [[0] * 9] * 9
 	vnEntryVal = []
+
+
+	def GetBlockStartColRow(self, i, j):
+		return (math.floor(i / 3) * 3, math.floor(j / 3) * 3)
 
 
 	def HandleClickEvent(self, event):
@@ -89,9 +94,8 @@ class Sudoku:
 
 
 	def VerifyBlock(self, i, j, bCanHaveBlanks = False):
-		q = math.floor(i / 3) * 3;
-		w = math.floor(j / 3) * 3;
-		vbTemp = np.resize(self.vnArr[q: q + 3, w: w + 3], (9))
+		(nMinI, nMinJ) = self.GetBlockStartColRow(i , j)
+		vbTemp = np.resize(self.vnArr[nMinI: nMinI + 3, nMinJ: nMinJ + 3], (9))
 		print("VerifyBlock: " + str(i) + ", " + str(j))
 		return self.VerifyNineNumbers(vbTemp, bCanHaveBlanks)
 
@@ -116,9 +120,20 @@ class Sudoku:
 		return True
 
 
-	def FillCell(self, i, j, nVal):
+	def FillCell(self, i, j, nVal): # nVal in range 1 - 9
 		self.vnArr[i, j] = nVal
-		(self.vCell[i][j]).Fill(nVal)
+		nArrCnt = nVal - 1
+		# set other cell in same row/column/block not possible
+		self.vbPossible[i, :, nArrCnt] = False
+		self.vbPossible[:, j, nArrCnt] = False
+		(nMinI, nMinJ) = self.GetBlockStartColRow(i , j)
+		self.vbPossible[nMinI: nMinI + 3, nMinJ: nMinJ + 3, nArrCnt] = False
+		# set other cell in same row/column/block one less possible value
+		vnToSubstract = np.zeros((9, 9), dtype = int)
+		vnToSubstract[i, :] = 1
+		vnToSubstract[:, j] = 1
+		vnToSubstract[nMinI: nMinI + 3, nMinJ: nMinJ + 3] = 1
+		self.nFilledCell = self.nFilledCell + 1
 
 
 	def RandomizeSudoku(self, nSeed = 1):
